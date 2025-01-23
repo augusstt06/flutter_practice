@@ -1,18 +1,28 @@
 import 'package:flutter/material.dart';
 
 class TodoItem extends StatelessWidget {
-  const TodoItem({super.key});
+  final bool isChecked;
+  final String todoText;
 
+  final Function(bool?)? onChanged;
+  const TodoItem(
+      {super.key,
+      required this.isChecked,
+      required this.todoText,
+      required this.onChanged});
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Padding(
         padding: EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.deepPurple[500],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [Text("Item")],
-        ));
+        child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple[500],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(children: [
+              Checkbox(onChanged: onChanged, value: isChecked),
+              Text(todoText)
+            ])));
   }
 }

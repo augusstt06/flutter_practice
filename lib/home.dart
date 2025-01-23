@@ -20,7 +20,13 @@ class _HomeState extends State<Home> {
         elevation: 10,
       ),
       body: Column(
-        children: [TodoItem()],
+        children: [
+          TodoItem(
+            onChanged: (value) {},
+            todoText: 'Todo',
+            isChecked: false,
+          )
+        ],
       ),
     );
   }
