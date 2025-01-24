@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_practice/db/db.dart';
 import 'package:flutter_practice/utils/dialog_box.dart';
 import 'package:flutter_practice/utils/todo_item.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,15 +13,25 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final _controller = TextEditingController();
-  List todoList = [
-    ["Todo", false],
-    ["Todo2", true],
-    ["Todo3", false],
-  ];
 
-  // 체크박스클릭 함수
+  // db 인스턴스 생성
+  final _todoBox = Hive.box('todo');
+  DataBase db = DataBase();
+
+  @override
+  void initState() {
+    if (_todoBox.get('todoList') == null) {
+      db.createData();
+    } else {
+      db.loadData();
+    }
+
+    super.initState();
+  }
+
+  // 체크박스 클릭 함수
   void handlecheckBox(bool? value, int index) => setState(() {
-        todoList[index][1] = !todoList[index][1];
+        db.todoList[index][1] = !db.todoList[index][1];
       });
 
   void changeHandler(bool? value) {
@@ -28,7 +40,7 @@ class _HomeState extends State<Home> {
 
   void saveTodo() {
     setState(() {
-      todoList.add([_controller.text, false]);
+      db.todoList.add([_controller.text, false]);
       _controller.clear();
       Navigator.of(context).pop();
     });
@@ -65,11 +77,11 @@ class _HomeState extends State<Home> {
           ),
         ),
         body: ListView.builder(
-          itemCount: todoList.length,
+          itemCount: db.todoList.length,
           itemBuilder: (context, index) {
             return TodoItem(
-                isChecked: todoList[index][1],
-                todoText: todoList[index][0],
+                isChecked: db.todoList[index][1],
+                todoText: db.todoList[index][0],
                 onChanged: (value) => handlecheckBox(value, index));
           },
         ));
