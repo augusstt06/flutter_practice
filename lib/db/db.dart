@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 class DataBase {
   List todoList = [];
 
-  final _todoBox = Hive.box('todo');
+  final _todoBox = Hive.box('todoBox');
 
   void createData() {
     todoList = [

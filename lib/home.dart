@@ -15,7 +15,7 @@ class _HomeState extends State<Home> {
   final _controller = TextEditingController();
 
   // db 인스턴스 생성
-  final _todoBox = Hive.box('todo');
+  final _todoBox = Hive.box('todoBox');
   DataBase db = DataBase();
 
   @override
@@ -30,9 +30,12 @@ class _HomeState extends State<Home> {
   }
 
   // 체크박스 클릭 함수
-  void handlecheckBox(bool? value, int index) => setState(() {
-        db.todoList[index][1] = !db.todoList[index][1];
-      });
+  void handlecheckBox(bool? value, int index) {
+    setState(() {
+      db.todoList[index][1] = !db.todoList[index][1];
+    });
+    db.updateData();
+  }
 
   void changeHandler(bool? value) {
     // setState();
@@ -44,6 +47,7 @@ class _HomeState extends State<Home> {
       _controller.clear();
       Navigator.of(context).pop();
     });
+    db.updateData();
   }
 
   void createTodo() {
@@ -55,6 +59,13 @@ class _HomeState extends State<Home> {
               onCancel: () => Navigator.of(context).pop(),
               onSave: saveTodo);
         });
+  }
+
+  void deleteTodo(int index) {
+    setState(() {
+      db.todoList.removeAt(index);
+      db.updateData();
+    });
   }
 
   @override
@@ -80,9 +91,11 @@ class _HomeState extends State<Home> {
           itemCount: db.todoList.length,
           itemBuilder: (context, index) {
             return TodoItem(
-                isChecked: db.todoList[index][1],
-                todoText: db.todoList[index][0],
-                onChanged: (value) => handlecheckBox(value, index));
+              isChecked: db.todoList[index][1],
+              todoText: db.todoList[index][0],
+              onChanged: (value) => handlecheckBox(value, index),
+              onDeletePressed: (context) => deleteTodo(index),
+            );
           },
         ));
   }
